@@ -1,0 +1,15 @@
+services:
+  mysql-server:
+    image: mysql:8.0.31
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: music
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  db:
