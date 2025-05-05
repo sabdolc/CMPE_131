@@ -22,3 +22,12 @@ def token(text):
 tfid = TfidfVectorizer(analyzer='word', stop_words='english') #create vectorizer object
 matrix = tfid.fit_transform(df['text']) #create vectors for each song entry's text
 similarity_scores = cosine_similarity(matrix) #calculate similarity using cosine similarity formula; each index contains a list of how similar the indexed song is to every other song
+
+#recommends a the top 5 songs using similarity scores, takes a song name as input
+def recommender(song_name):
+    id = df[df['song']==song_name].index[0]
+    distance = sorted(list(enumerate(similarity_scores[id])), reverse = True, key = lambda x:x[1])
+    song = []
+    for sID in distance[1:6]:
+        song.append(df.iloc[sID[0]].song)
+    return song
