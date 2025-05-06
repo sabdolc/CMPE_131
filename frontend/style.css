@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #dacbf0;
     padding: 20px;
     text-align: center;
 }
@@ -17,6 +17,8 @@ select, input {
     border-radius: 5px;
     font-size: 16px;
 }
+
+
 
 #track-container {
     display: flex;
@@ -41,4 +43,23 @@ select, input {
 
 .track-card p {
     color: #666;
+}
+
+/* Style for the recommendation list container */
+#recommendation-list {
+    display: flex; /* Use Flexbox */
+    flex-wrap: wrap; /* Allow items to wrap to the next row */
+    gap: 20px; /* Add space between items */
+    justify-content: center; /* Center items horizontally */
+}
+
+/* Style for each track card */
+.track-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    width: 250px; /* Set a fixed width for each card */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
 }

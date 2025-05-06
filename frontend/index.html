@@ -7,18 +7,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Recommended Tracks</h1>
+    <header>
+        <h1>Music Recommendation System</h1>
+        <p>Enter a song or artist to discover similar tracks!</p>
+    </header>
 
-    <label for="artist-selector">Filter by Artist:</label>
-    <select id="artist-selector">
-        <option value="">All Tracks</option>
-        <option value="123XYZ">Artist 1</option>
-        <option value="456ABC">Artist 2</option>
-    </select>
+    <main>
+        <!-- Search Section -->
+        <section id="search-section">
+            <input type="text" id="search" placeholder="Enter a song or artist name..." />
+            <div id="loading-spinner" style="display: none;">
+                <img src="spinner.gif" alt="Loading..." style="width: 50px; height: 50px;">
+            </div>
+            <button id="get-recommendations">Get Recommendations</button>
+        </section>
 
-    <input type="text" id="search" placeholder="Search tracks...">
+        <!-- Recommendations Section -->
+        <section id="recommendations">
+            <h2>Recommended Songs</h2>
+            <div id="recommendation-list">
+                <!-- Recommendations will be dynamically added here -->
+            </div>
+        </section>
+    </main>
 
-    <div id="track-container"></div>
+    <footer>
+        <p>&copy; 2025 Music Recommendation System</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>

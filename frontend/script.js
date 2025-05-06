@@ -1,59 +1,79 @@
-// Fetch all tracks from backend
-async function fetchTracks() {
-    try {
-        const response = await fetch("http://localhost:3000/tracks");
-        const data = await response.json();
-        displayTracks(data);
-    } catch (error) {
-        console.error("Error fetching tracks:", error);
+const searchInput = document.getElementById("search");
+const autocompleteList = document.createElement("ul");
+autocompleteList.id = "autocomplete-list";
+autocompleteList.style.position = "absolute";
+autocompleteList.style.backgroundColor = "white";
+autocompleteList.style.border = "1px solid #ccc";
+autocompleteList.style.listStyle = "none";
+autocompleteList.style.padding = "0";
+autocompleteList.style.margin = "0";
+autocompleteList.style.width = "60%";
+autocompleteList.style.zIndex = "1000";
+searchInput.parentNode.appendChild(autocompleteList);
+
+const spinner = document.getElementById("loading-spinner"); // Reference to the spinner
+
+// Autocomplete functionality
+searchInput.addEventListener("input", async () => {
+    const query = searchInput.value.trim();
+    if (!query) {
+        autocompleteList.innerHTML = ""; // Clear suggestions
+        return;
     }
-}
 
-// Fetch tracks based on selected artist
-async function fetchTracksByArtist(artistId) {
     try {
-        const response = await fetch(`http://localhost:3000/tracks?artist=${artistId}`);
-        const data = await response.json();
-        displayTracks(data);
+        const response = await fetch(`/autocomplete?query=${encodeURIComponent(query)}`);
+        const suggestions = await response.json();
+
+        autocompleteList.innerHTML = ""; // Clear previous suggestions
+        suggestions.forEach(suggestion => {
+            const listItem = document.createElement("li");
+            listItem.textContent = suggestion.name || suggestion.artist; // Use song or artist name
+            listItem.style.padding = "10px";
+            listItem.style.cursor = "pointer";
+
+            listItem.addEventListener("click", () => {
+                searchInput.value = suggestion.name || suggestion.artist; // Set the selected value
+                autocompleteList.innerHTML = ""; // Clear suggestions
+            });
+
+            autocompleteList.appendChild(listItem);
+        });
     } catch (error) {
-        console.error("Error fetching artist tracks:", error);
-    }
-}
-
-// Display tracks dynamically
-function displayTracks(tracks) {
-    const container = document.getElementById("track-container");
-    container.innerHTML = ""; // Clear previous content
-
-    tracks.forEach(track => {
-        const trackCard = document.createElement("div");
-        trackCard.className = "track-card";
-        trackCard.innerHTML = `
-            <h3>${track.name}</h3>
-            <p>Artist: ${track.artist_uri}</p>
-        `;
-        container.appendChild(trackCard);
-    });
-}
-
-// Search functionality for filtering track names
-document.getElementById("search").addEventListener("input", (event) => {
-    const query = event.target.value.toLowerCase();
-    const items = document.querySelectorAll(".track-card");
-    items.forEach(item => {
-        item.style.display = item.innerText.toLowerCase().includes(query) ? "block" : "none";
-    });
-});
-
-// Artist filtering functionality
-document.getElementById("artist-selector").addEventListener("change", (event) => {
-    const artistId = event.target.value;
-    if (artistId) {
-        fetchTracksByArtist(artistId);
-    } else {
-        fetchTracks(); // Load all tracks
+        console.error("Error fetching autocomplete suggestions:", error);
     }
 });
 
-// Load all tracks when the page first loads
-window.onload = fetchTracks;
+// Fetch recommendations with a loading spinner
+document.getElementById("get-recommendations").addEventListener("click", async () => {
+    const query = searchInput.value.trim();
+    if (!query) {
+        alert("Please enter a song name!");
+        return;
+    }
+
+    spinner.style.display = "block"; // Show spinner
+
+    try {
+        const response = await fetch(`/recommendations?song=${encodeURIComponent(query)}`);
+        const recommendations = await response.json();
+
+        const recommendationList = document.getElementById("recommendation-list");
+        recommendationList.innerHTML = ""; // Clear previous recommendations
+
+        recommendations.forEach(track => {
+            const trackCard = document.createElement("div");
+            trackCard.className = "track-card";
+            trackCard.innerHTML = `
+                <h3>${track.song}</h3>
+                <p>Artist: ${track.artist}</p>
+            `;
+            recommendationList.appendChild(trackCard);
+        });
+    } catch (error) {
+        console.error("Error fetching recommendations:", error);
+        alert("Failed to fetch recommendations. Please try again later.");
+    } finally {
+        spinner.style.display = "none"; // Hide spinner
+    }
+});
